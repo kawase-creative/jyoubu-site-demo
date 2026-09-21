@@ -17,4 +17,3 @@ document.querySelector('.menu-toggle').addEventListener('click', (event) => {
   button.setAttribute('aria-expanded', String(!nav.hidden));
   button.setAttribute('aria-label', nav.hidden ? 'メニューを開く' : 'メニューを閉じる');
 });
-document.querySelector('.back-top').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
