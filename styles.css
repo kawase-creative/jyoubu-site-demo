@@ -56,3 +56,8 @@
 .contact-status{min-height:1.4em;margin:5px 0 0;color:var(--gold-dark);font-size:.8rem;text-align:center}
 @media(max-width:600px){.contact-dialog{padding:23px 19px 17px;max-height:94dvh}.contact-dialog h2{font-size:1.45rem}.contact-dialog p#contact-lead{font-size:.8rem;margin-bottom:11px}#contact-form{gap:5px}#contact-form label{margin-top:5px;font-size:.85rem}#contact-form input,#contact-form select,#contact-form textarea{padding:8px 10px}#contact-form textarea{min-height:72px}.contact-submit{margin-top:10px}}
 @media(max-width:360px){.contact-close{position:sticky;top:0;float:right;z-index:1;background:#fff;border-radius:50%;margin-top:-6px;margin-right:-5px}}
+/* Preserve the full replacement photograph */
+.about-image{min-height:0}
+.about-image>img{width:72%;height:auto;min-height:0;object-fit:contain}
+@media(max-width:900px){.about-image{min-height:0}.about-image>img{min-height:0}}
+@media(max-width:600px){.about-image{display:block}.about-image>img{width:100%;height:auto;min-height:0}.about-image-note{display:flex;flex-direction:row;align-items:center;gap:10px;padding:12px 16px}.about-image-note .handwriting{font-size:1.25rem;white-space:normal;transform:none}.about-image-note strong{font-size:.76rem;min-width:0;margin:0;padding:7px}}
