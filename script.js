@@ -135,3 +135,62 @@ document.querySelectorAll('.work-item[data-work-id]').forEach((card) => {
     setTimeout(() => setEditor(false), 650);
   });
 });
+
+
+// Admin edit mode prototype
+const adminDialog = document.getElementById('admin-dialog');
+const adminTrigger = document.querySelector('.admin-trigger');
+const adminClose = document.querySelector('.admin-close');
+const adminLoginForm = document.getElementById('admin-login-form');
+const adminPassword = document.getElementById('admin-password');
+const adminLoginStatus = document.getElementById('admin-login-status');
+const adminModeBar = document.getElementById('admin-mode-bar');
+const adminLogout = document.getElementById('admin-logout');
+
+function setAdminMode(enabled) {
+  document.body.classList.toggle('admin-mode', enabled);
+  adminModeBar.hidden = !enabled;
+  document.querySelectorAll('.work-editor').forEach((editor) => {
+    if (!enabled) editor.hidden = true;
+  });
+  document.querySelectorAll('.work-edit-toggle').forEach((toggle) => {
+    if (!enabled) {
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.textContent = '✎ この事例を編集';
+    }
+  });
+}
+
+adminTrigger?.addEventListener('click', () => {
+  if (document.body.classList.contains('admin-mode')) {
+    document.querySelector('.works')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+  adminLoginStatus.textContent = '';
+  adminPassword.value = '';
+  adminDialog.showModal();
+  setTimeout(() => adminPassword.focus(), 50);
+});
+
+adminClose?.addEventListener('click', () => adminDialog.close());
+
+adminDialog?.addEventListener('click', (event) => {
+  if (event.target === adminDialog) adminDialog.close();
+});
+
+adminLoginForm?.addEventListener('submit', (event) => {
+  event.preventDefault();
+  if (adminPassword.value === '0000') {
+    setAdminMode(true);
+    adminDialog.close();
+    document.querySelector('.works')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else {
+    adminLoginStatus.textContent = 'パスワードが違います。';
+    adminPassword.select();
+  }
+});
+
+adminLogout?.addEventListener('click', () => {
+  setAdminMode(false);
+  document.querySelector('.footer')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
