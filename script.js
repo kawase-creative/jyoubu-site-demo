@@ -46,6 +46,32 @@ menuToggle.addEventListener('click', () => {
 
 
 // WORKS mini editor prototype (browser-local demo)
+
+function compressWorkImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = () => {
+        const maxWidth = 1200;
+        const scale = Math.min(1, maxWidth / img.width);
+        const width = Math.max(1, Math.round(img.width * scale));
+        const height = Math.max(1, Math.round(img.height * scale));
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.82));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 const WORKS_STORAGE_KEY = 'jyoubu-works-demo-v1';
 
 function loadWorksData() {
@@ -65,10 +91,20 @@ function applyWorkData(card, data) {
   const title = card.querySelector('.work-title');
   const description = card.querySelector('.work-description');
   const instagramLink = card.querySelector('.work-instagram-link');
+  const mainImage = card.querySelector('.work-preview img');
+  const editorPreview = card.querySelector('.work-editor-preview');
+  const imageUrlInput = card.querySelector('.work-input-image-url');
   const titleInput = card.querySelector('.work-input-title');
   const descriptionInput = card.querySelector('.work-input-description');
   const instagramInput = card.querySelector('.work-input-instagram');
 
+  if (typeof data.image === 'string' && data.image) {
+    mainImage.src = data.image;
+    editorPreview.src = data.image;
+    imageUrlInput.value = data.image.startsWith('data:') ? '' : data.image;
+  } else {
+    editorPreview.src = mainImage.src;
+  }
   if (typeof data.title === 'string') {
     title.textContent = data.title;
     titleInput.value = data.title;
@@ -98,8 +134,39 @@ document.querySelectorAll('.work-item[data-work-id]').forEach((card) => {
   const cancel = card.querySelector('.work-cancel');
   const save = card.querySelector('.work-save');
   const status = card.querySelector('.work-save-status');
+  const imageFileInput = card.querySelector('.work-input-image-file');
+  const imageUrlInput = card.querySelector('.work-input-image-url');
+  const editorPreview = card.querySelector('.work-editor-preview');
+  let pendingImage = '';
 
   applyWorkData(card, worksData[id]);
+  if (!editorPreview.src) editorPreview.src = card.querySelector('.work-preview img').src;
+
+  imageFileInput.addEventListener('change', async () => {
+    const file = imageFileInput.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      status.textContent = '画像ファイルを選択してください。';
+      return;
+    }
+    try {
+      pendingImage = await compressWorkImage(file);
+      editorPreview.src = pendingImage;
+      imageUrlInput.value = '';
+      status.textContent = '写真を読み込みました。保存すると反映されます。';
+    } catch {
+      status.textContent = '写真の読み込みに失敗しました。';
+    }
+  });
+
+  imageUrlInput.addEventListener('input', () => {
+    const url = imageUrlInput.value.trim();
+    if (/^https?:\/\//i.test(url)) {
+      pendingImage = url;
+      editorPreview.src = url;
+      status.textContent = '画像URLをプレビューしています。';
+    }
+  });
 
   function setEditor(open) {
     editor.hidden = !open;
@@ -113,8 +180,11 @@ document.querySelectorAll('.work-item[data-work-id]').forEach((card) => {
     applyWorkData(card, worksData[id] || {
       title: card.querySelector('.work-title').textContent,
       description: card.querySelector('.work-description').textContent,
-      instagram: card.querySelector('.work-instagram-link').hidden ? '' : card.querySelector('.work-instagram-link').href
+      instagram: card.querySelector('.work-instagram-link').hidden ? '' : card.querySelector('.work-instagram-link').href,
+      image: card.querySelector('.work-preview img').src
     });
+    pendingImage = '';
+    imageFileInput.value = '';
     setEditor(false);
   });
 
@@ -124,14 +194,23 @@ document.querySelectorAll('.work-item[data-work-id]').forEach((card) => {
       status.textContent = 'InstagramのURL（https://www.instagram.com/...）を入力してください。';
       return;
     }
+    const typedImageUrl = imageUrlInput.value.trim();
+    if (typedImageUrl && !/^https?:\/\//i.test(typedImageUrl)) {
+      status.textContent = '画像URLは https:// から入力してください。';
+      return;
+    }
+    const currentImage = card.querySelector('.work-preview img').src;
     worksData[id] = {
       title: card.querySelector('.work-input-title').value.trim(),
       description: card.querySelector('.work-input-description').value.trim(),
-      instagram
+      instagram,
+      image: pendingImage || typedImageUrl || worksData[id]?.image || currentImage
     };
     saveWorksData(worksData);
     applyWorkData(card, worksData[id]);
-    status.textContent = 'この端末に保存しました。';
+    status.textContent = '写真を含め、この端末に保存しました。';
+    pendingImage = '';
+    imageFileInput.value = '';
     setTimeout(() => setEditor(false), 650);
   });
 });
