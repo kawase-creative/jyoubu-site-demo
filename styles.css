@@ -110,3 +110,12 @@ body.admin-mode .work-edit-toggle{display:inline-block}
 .footer-nav .admin-trigger{color:inherit}
 body.admin-mode .footer-nav .admin-trigger{color:var(--gold);font-weight:700}
 @media(max-width:600px){.admin-dialog{padding:26px 22px 22px}.admin-mode-bar{width:calc(100% - 24px);bottom:12px;justify-content:space-between}.admin-mode-bar span{display:none}}
+
+
+/* WORKS image editor */
+.work-image-editor{margin-bottom:13px;padding-bottom:13px;border-bottom:1px solid #e3dbcf}
+.work-editor-label{display:block;margin-bottom:6px;font-size:.72rem;font-weight:700}
+.work-editor-preview{width:100%;aspect-ratio:1.55;object-fit:cover;border-radius:6px;margin:0 0 9px;background:#eee}
+.work-file-button{display:inline-flex!important;align-items:center;justify-content:center;width:auto!important;margin:0 0 8px!important;padding:7px 13px;border:1px solid var(--gold);border-radius:999px;color:var(--gold-dark);background:#fff;cursor:pointer;font-size:.7rem!important}
+.work-file-button input{display:none!important}
+.work-image-editor small{display:block;margin-top:5px;color:#777;font-size:.64rem;line-height:1.5}
