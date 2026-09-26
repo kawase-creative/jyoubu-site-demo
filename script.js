@@ -203,19 +203,22 @@ adminLogout?.addEventListener('click', () => {
 });
 
 
-// Instagram embed section (browser-local demo)
-const INSTAGRAM_STORAGE_KEY = 'jyoubu-instagram-demo-v1';
+// Instagram embed section (shared JSON on GitHub Pages)
+const INSTAGRAM_JSON_PATH = 'data/instagram.json';
 
-function loadInstagramData() {
+async function loadInstagramData() {
   try {
-    return JSON.parse(localStorage.getItem(INSTAGRAM_STORAGE_KEY) || '{}');
+    const response = await fetch(`${INSTAGRAM_JSON_PATH}?v=${Date.now()}`, { cache: 'no-store' });
+    if (!response.ok) throw new Error('Failed to load Instagram JSON');
+    const json = await response.json();
+    const data = {};
+    for (const post of json.posts || []) {
+      data[String(post.id)] = post.url || '';
+    }
+    return data;
   } catch {
     return {};
   }
-}
-
-function saveInstagramData(data) {
-  localStorage.setItem(INSTAGRAM_STORAGE_KEY, JSON.stringify(data));
 }
 
 function renderInstagramSlot(slot, url) {
@@ -243,42 +246,44 @@ function renderInstagramSlot(slot, url) {
   }
 }
 
-const instagramData = loadInstagramData();
+async function initInstagramSlots() {
+  const instagramData = await loadInstagramData();
 
-document.querySelectorAll('.instagram-slot[data-instagram-slot]').forEach((slot) => {
-  const id = slot.dataset.instagramSlot;
-  const toggle = slot.querySelector('.instagram-edit-toggle');
-  const editor = slot.querySelector('.instagram-editor');
-  const input = slot.querySelector('.instagram-url-input');
-  const save = slot.querySelector('.instagram-save');
-  const cancel = slot.querySelector('.instagram-cancel');
-  const status = slot.querySelector('.instagram-save-status');
+  document.querySelectorAll('.instagram-slot[data-instagram-slot]').forEach((slot) => {
+    const id = slot.dataset.instagramSlot;
+    const toggle = slot.querySelector('.instagram-edit-toggle');
+    const editor = slot.querySelector('.instagram-editor');
+    const input = slot.querySelector('.instagram-url-input');
+    const save = slot.querySelector('.instagram-save');
+    const cancel = slot.querySelector('.instagram-cancel');
+    const status = slot.querySelector('.instagram-save-status');
 
-  input.value = instagramData[id] || '';
-  renderInstagramSlot(slot, instagramData[id] || '');
-
-  function setInstagramEditor(open) {
-    editor.hidden = !open;
-    toggle.textContent = open ? '× 編集を閉じる' : '✎ 投稿URLを編集';
-    status.textContent = '';
-  }
-
-  toggle.addEventListener('click', () => setInstagramEditor(editor.hidden));
-  cancel.addEventListener('click', () => {
     input.value = instagramData[id] || '';
-    setInstagramEditor(false);
-  });
+    renderInstagramSlot(slot, instagramData[id] || '');
 
-  save.addEventListener('click', () => {
-    const url = input.value.trim();
-    if (url && !/^https:\/\/(www\.)?instagram\.com\/(p|reel|tv)\//i.test(url)) {
-      status.textContent = 'Instagramの投稿URLを入力してください。';
-      return;
+    function setInstagramEditor(open) {
+      editor.hidden = !open;
+      toggle.textContent = open ? '× 編集を閉じる' : '✎ 投稿URLを編集';
+      status.textContent = '';
     }
-    instagramData[id] = url;
-    saveInstagramData(instagramData);
-    renderInstagramSlot(slot, url);
-    status.textContent = 'この端末に保存しました。';
-    setTimeout(() => setInstagramEditor(false), 650);
+
+    toggle.addEventListener('click', () => setInstagramEditor(editor.hidden));
+    cancel.addEventListener('click', () => {
+      input.value = instagramData[id] || '';
+      setInstagramEditor(false);
+    });
+
+    save.addEventListener('click', () => {
+      const url = input.value.trim();
+      if (url && !/^https:\/\/(www\.)?instagram\.com\/(p|reel|tv)\//i.test(url)) {
+        status.textContent = 'Instagramの投稿URLを入力してください。';
+        return;
+      }
+      instagramData[id] = url;
+      renderInstagramSlot(slot, url);
+      status.textContent = 'プレビューしました。公開反映にはGitHub JSONの更新が必要です。';
+    });
   });
-});
+}
+
+initInstagramSlots();
