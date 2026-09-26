@@ -160,6 +160,12 @@ function setAdminMode(enabled) {
       toggle.textContent = '✎ この事例を編集';
     }
   });
+  document.querySelectorAll('.instagram-editor').forEach((editor) => {
+    if (!enabled) editor.hidden = true;
+  });
+  document.querySelectorAll('.instagram-edit-toggle').forEach((toggle) => {
+    if (!enabled) toggle.textContent = '✎ 投稿URLを編集';
+  });
 }
 
 adminTrigger?.addEventListener('click', () => {
@@ -194,4 +200,85 @@ adminLoginForm?.addEventListener('submit', (event) => {
 adminLogout?.addEventListener('click', () => {
   setAdminMode(false);
   document.querySelector('.footer')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+
+// Instagram embed section (browser-local demo)
+const INSTAGRAM_STORAGE_KEY = 'jyoubu-instagram-demo-v1';
+
+function loadInstagramData() {
+  try {
+    return JSON.parse(localStorage.getItem(INSTAGRAM_STORAGE_KEY) || '{}');
+  } catch {
+    return {};
+  }
+}
+
+function saveInstagramData(data) {
+  localStorage.setItem(INSTAGRAM_STORAGE_KEY, JSON.stringify(data));
+}
+
+function renderInstagramSlot(slot, url) {
+  const host = slot.querySelector('.instagram-embed-host');
+  const slotNo = slot.dataset.instagramSlot;
+  if (!url) {
+    host.innerHTML = `
+      <div class="instagram-placeholder">
+        <img src="assets/instagram-icon.png" alt="">
+        <strong>Instagram POST 0${slotNo}</strong>
+        <span>管理者モードから投稿URLを設定できます。</span>
+      </div>`;
+    return;
+  }
+
+  host.innerHTML = `
+    <blockquote class="instagram-media" data-instgrm-permalink="${url}" data-instgrm-version="14">
+      <a href="${url}" target="_blank" rel="noopener">Instagramで投稿を見る</a>
+    </blockquote>`;
+
+  if (window.instgrm?.Embeds?.process) {
+    window.instgrm.Embeds.process();
+  } else {
+    setTimeout(() => window.instgrm?.Embeds?.process?.(), 1200);
+  }
+}
+
+const instagramData = loadInstagramData();
+
+document.querySelectorAll('.instagram-slot[data-instagram-slot]').forEach((slot) => {
+  const id = slot.dataset.instagramSlot;
+  const toggle = slot.querySelector('.instagram-edit-toggle');
+  const editor = slot.querySelector('.instagram-editor');
+  const input = slot.querySelector('.instagram-url-input');
+  const save = slot.querySelector('.instagram-save');
+  const cancel = slot.querySelector('.instagram-cancel');
+  const status = slot.querySelector('.instagram-save-status');
+
+  input.value = instagramData[id] || '';
+  renderInstagramSlot(slot, instagramData[id] || '');
+
+  function setInstagramEditor(open) {
+    editor.hidden = !open;
+    toggle.textContent = open ? '× 編集を閉じる' : '✎ 投稿URLを編集';
+    status.textContent = '';
+  }
+
+  toggle.addEventListener('click', () => setInstagramEditor(editor.hidden));
+  cancel.addEventListener('click', () => {
+    input.value = instagramData[id] || '';
+    setInstagramEditor(false);
+  });
+
+  save.addEventListener('click', () => {
+    const url = input.value.trim();
+    if (url && !/^https:\/\/(www\.)?instagram\.com\/(p|reel|tv)\//i.test(url)) {
+      status.textContent = 'Instagramの投稿URLを入力してください。';
+      return;
+    }
+    instagramData[id] = url;
+    saveInstagramData(instagramData);
+    renderInstagramSlot(slot, url);
+    status.textContent = 'この端末に保存しました。';
+    setTimeout(() => setInstagramEditor(false), 650);
+  });
 });
