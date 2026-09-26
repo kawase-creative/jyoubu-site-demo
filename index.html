@@ -220,7 +220,7 @@
     <section class="final-cta"><div class="wrap final-cta-inner"><div><h2>理想の暮らしづくり、<br>はじめませんか？</h2><p>リフォーム・インテリアのことなら 株式会社 上武にお任せください。</p></div><div class="final-actions"><button class="pill pill-gold contact-trigger" type="button">無料相談・お問い合わせ <svg><use href="#i-arrow"/></svg></button><div class="hero-socials"><button class="social-link demo-trigger" type="button"><span class="social instagram"><img src="assets/instagram-icon.png" alt=""></span><span><strong>Instagram</strong><small>施工事例をチェック</small></span></button><button class="social-link contact-trigger" type="button"><span class="social line"><img src="assets/line-icon.png" alt=""></span><span><strong>LINE</strong><small>気軽に相談する</small></span></button></div></div></div></section>
   </main>
 
-  <footer class="footer"><div class="wrap footer-inner"><div class="footer-brand"><span class="brand-mark"><img src="assets/brand-house.webp" alt=""></span><span class="brand-text"><strong>JYOUBU</strong><small>株式会社 上武</small></span></div><div class="footer-details"><p>〒330-0855 埼玉県さいたま市大宮区上小町30-53</p><p>TEL 0120-181-147　FAX 048-665-6638</p><p>営業時間 9:00〜18:00　定休日 水・日・祝日</p></div><nav class="footer-nav" aria-label="フッターナビゲーション"><button class="demo-trigger" type="button">ホーム</button><button class="demo-trigger" type="button">私たちについて</button><button class="demo-trigger" type="button">サービス</button><button class="demo-trigger" type="button">施工事例</button><button class="demo-trigger" type="button">料金プラン</button><button class="demo-trigger" type="button">よくあるご質問</button><button class="demo-trigger" type="button">プライバシーポリシー</button></nav><small class="copyright">© 2026 株式会社 上武 (JYOUBU)</small></div></footer>
+  <footer class="footer"><div class="wrap footer-inner"><div class="footer-brand"><span class="brand-mark"><img src="assets/brand-house.webp" alt=""></span><span class="brand-text"><strong>JYOUBU</strong><small>株式会社 上武</small></span></div><div class="footer-details"><p>〒330-0855 埼玉県さいたま市大宮区上小町30-53</p><p>TEL 0120-181-147　FAX 048-665-6638</p><p>営業時間 9:00〜18:00　定休日 水・日・祝日</p></div><nav class="footer-nav" aria-label="フッターナビゲーション"><button class="demo-trigger" type="button">ホーム</button><button class="demo-trigger" type="button">私たちについて</button><button class="demo-trigger" type="button">サービス</button><button class="demo-trigger" type="button">施工事例</button><button class="demo-trigger" type="button">料金プラン</button><button class="demo-trigger" type="button">よくあるご質問</button><button class="admin-trigger" type="button">管理者</button></nav><small class="copyright">© 2026 株式会社 上武 (JYOUBU)</small></div></footer>
   <button class="back-top demo-trigger" type="button" aria-label="ページの先頭へ">↑</button>
   <dialog id="contact-dialog" class="contact-dialog" aria-labelledby="contact-title" aria-describedby="contact-lead">
     <button class="contact-close" type="button" aria-label="お問い合わせフォームを閉じる">×</button>
@@ -249,6 +249,23 @@
       <p id="contact-status" class="contact-status" role="status" aria-live="polite"></p>
     </form>
   </dialog>
+  <dialog id="admin-dialog" class="admin-dialog" aria-labelledby="admin-title">
+    <button class="admin-close" type="button" aria-label="管理者ログインを閉じる">×</button>
+    <span class="eyebrow">ADMIN</span>
+    <h2 id="admin-title">管理者ログイン</h2>
+    <p>編集モードに切り替えるにはパスワードを入力してください。</p>
+    <form id="admin-login-form">
+      <label for="admin-password">パスワード</label>
+      <input id="admin-password" type="password" inputmode="numeric" autocomplete="current-password" placeholder="パスワードを入力" required>
+      <button class="pill pill-gold admin-login-submit" type="submit">編集モードにする</button>
+      <p id="admin-login-status" class="admin-login-status" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+  <div id="admin-mode-bar" class="admin-mode-bar" hidden>
+    <strong>管理者 編集モード</strong>
+    <span>施工事例を編集できます</span>
+    <button id="admin-logout" type="button">編集モードを終了</button>
+  </div>
   <dialog id="demo-dialog" class="demo-dialog" aria-labelledby="demo-message"><p id="demo-message">デモ画面です。</p><button class="pill pill-gold dialog-close" type="button">閉じる</button></dialog>
 </body>
 </html>
