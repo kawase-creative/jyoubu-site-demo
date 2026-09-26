@@ -43,3 +43,95 @@ menuToggle.addEventListener('click', () => {
   menuToggle.setAttribute('aria-expanded', String(!mobileNav.hidden));
   menuToggle.setAttribute('aria-label', mobileNav.hidden ? 'メニューを開く' : 'メニューを閉じる');
 });
+
+
+// WORKS mini editor prototype (browser-local demo)
+const WORKS_STORAGE_KEY = 'jyoubu-works-demo-v1';
+
+function loadWorksData() {
+  try {
+    return JSON.parse(localStorage.getItem(WORKS_STORAGE_KEY) || '{}');
+  } catch {
+    return {};
+  }
+}
+
+function saveWorksData(data) {
+  localStorage.setItem(WORKS_STORAGE_KEY, JSON.stringify(data));
+}
+
+function applyWorkData(card, data) {
+  if (!data) return;
+  const title = card.querySelector('.work-title');
+  const description = card.querySelector('.work-description');
+  const instagramLink = card.querySelector('.work-instagram-link');
+  const titleInput = card.querySelector('.work-input-title');
+  const descriptionInput = card.querySelector('.work-input-description');
+  const instagramInput = card.querySelector('.work-input-instagram');
+
+  if (typeof data.title === 'string') {
+    title.textContent = data.title;
+    titleInput.value = data.title;
+  }
+  if (typeof data.description === 'string') {
+    description.textContent = data.description;
+    descriptionInput.value = data.description;
+  }
+  if (typeof data.instagram === 'string') {
+    instagramInput.value = data.instagram;
+    if (/^https:\/\/(www\.)?instagram\.com\//i.test(data.instagram)) {
+      instagramLink.href = data.instagram;
+      instagramLink.hidden = false;
+    } else {
+      instagramLink.hidden = true;
+      instagramLink.removeAttribute('href');
+    }
+  }
+}
+
+const worksData = loadWorksData();
+
+document.querySelectorAll('.work-item[data-work-id]').forEach((card) => {
+  const id = card.dataset.workId;
+  const editor = card.querySelector('.work-editor');
+  const toggle = card.querySelector('.work-edit-toggle');
+  const cancel = card.querySelector('.work-cancel');
+  const save = card.querySelector('.work-save');
+  const status = card.querySelector('.work-save-status');
+
+  applyWorkData(card, worksData[id]);
+
+  function setEditor(open) {
+    editor.hidden = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.textContent = open ? '× 編集を閉じる' : '✎ この事例を編集';
+    status.textContent = '';
+  }
+
+  toggle.addEventListener('click', () => setEditor(editor.hidden));
+  cancel.addEventListener('click', () => {
+    applyWorkData(card, worksData[id] || {
+      title: card.querySelector('.work-title').textContent,
+      description: card.querySelector('.work-description').textContent,
+      instagram: card.querySelector('.work-instagram-link').hidden ? '' : card.querySelector('.work-instagram-link').href
+    });
+    setEditor(false);
+  });
+
+  save.addEventListener('click', () => {
+    const instagram = card.querySelector('.work-input-instagram').value.trim();
+    if (instagram && !/^https:\/\/(www\.)?instagram\.com\//i.test(instagram)) {
+      status.textContent = 'InstagramのURL（https://www.instagram.com/...）を入力してください。';
+      return;
+    }
+    worksData[id] = {
+      title: card.querySelector('.work-input-title').value.trim(),
+      description: card.querySelector('.work-input-description').value.trim(),
+      instagram
+    };
+    saveWorksData(worksData);
+    applyWorkData(card, worksData[id]);
+    status.textContent = 'この端末に保存しました。';
+    setTimeout(() => setEditor(false), 650);
+  });
+});
