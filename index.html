@@ -105,11 +105,89 @@
       </div></div>
     </section>
 
-    <section class="works section-pad" aria-labelledby="works-title"><div class="wrap"><div class="section-heading-row"><div><span class="eyebrow">WORKS</span><h2 id="works-title">施工事例</h2></div><p>リフォームも、インテリアも。実際の事例で、理想の暮らしをイメージしてください。</p><button class="pill pill-outline demo-trigger" type="button">施工事例をもっと見る <svg><use href="#i-arrow"/></svg></button></div><div class="works-grid">
-      <button class="work-item demo-trigger" type="button"><img src="assets/work-kitchen.webp" alt="キッチンリフォームの事例"><strong>キッチンリフォーム</strong><span>明るく使いやすい、家族が集まるキッチンに。</span></button>
-      <button class="work-item demo-trigger" type="button"><img src="assets/work-bath.webp" alt="洗面所リフォームの施工前と施工後"><strong>洗面所リフォーム</strong><span>清潔感のある、快適な洗面空間に。</span></button>
-      <button class="work-item demo-trigger" type="button"><img src="assets/work-living.webp" alt="リビングコーディネートの事例"><strong>リビングコーディネート</strong><span>ナチュラルで心地よい、家族のくつろぎ空間。</span></button>
-      <button class="work-item demo-trigger" type="button"><img src="assets/work-bedroom.webp" alt="寝室コーディネートの事例"><strong>寝室コーディネート</strong><span>やすらぎを感じる、ホテルライクな空間に。</span></button>
+    <section class="works section-pad" aria-labelledby="works-title"><div class="wrap"><div class="section-heading-row"><div><span class="eyebrow">WORKS</span><h2 id="works-title">施工事例</h2></div><p>リフォームも、インテリアも。実際の事例で、理想の暮らしをイメージしてください。</p><button class="pill pill-outline demo-trigger" type="button">施工事例をもっと見る <svg><use href="#i-arrow"/></svg></button></div>
+    <div class="works-edit-note"><span>DEMO EDIT</span> 各施工事例の下にある「この事例を編集」から、タイトル・説明・Instagram URLを試しに変更できます。</div>
+    <div class="works-grid">
+
+      <article class="work-item" data-work-id="kitchen">
+        <button class="work-preview demo-trigger" type="button">
+          <img src="assets/work-kitchen.webp" alt="キッチンリフォームの事例">
+          <strong class="work-title">キッチンリフォーム</strong>
+          <span class="work-description">明るく使いやすい、家族が集まるキッチンに。</span>
+        </button>
+        <button class="work-edit-toggle" type="button" aria-expanded="false">✎ この事例を編集</button>
+        <div class="work-editor" hidden>
+          <label>タイトル<input class="work-input-title" type="text" value="キッチンリフォーム"></label>
+          <label>説明文<textarea class="work-input-description" rows="3">明るく使いやすい、家族が集まるキッチンに。</textarea></label>
+          <label>Instagram投稿URL<input class="work-input-instagram" type="url" placeholder="https://www.instagram.com/p/..." inputmode="url"></label>
+          <div class="work-editor-actions">
+            <button class="work-save" type="button">保存</button>
+            <button class="work-cancel" type="button">キャンセル</button>
+          </div>
+          <p class="work-save-status" aria-live="polite"></p>
+        </div>
+        <a class="work-instagram-link" href="#" target="_blank" rel="noopener" hidden>Instagramでこの事例を見る →</a>
+      </article>
+
+      <article class="work-item" data-work-id="bath">
+        <button class="work-preview demo-trigger" type="button">
+          <img src="assets/work-bath.webp" alt="洗面所リフォームの施工前と施工後">
+          <strong class="work-title">洗面所リフォーム</strong>
+          <span class="work-description">清潔感のある、快適な洗面空間に。</span>
+        </button>
+        <button class="work-edit-toggle" type="button" aria-expanded="false">✎ この事例を編集</button>
+        <div class="work-editor" hidden>
+          <label>タイトル<input class="work-input-title" type="text" value="洗面所リフォーム"></label>
+          <label>説明文<textarea class="work-input-description" rows="3">清潔感のある、快適な洗面空間に。</textarea></label>
+          <label>Instagram投稿URL<input class="work-input-instagram" type="url" placeholder="https://www.instagram.com/p/..." inputmode="url"></label>
+          <div class="work-editor-actions">
+            <button class="work-save" type="button">保存</button>
+            <button class="work-cancel" type="button">キャンセル</button>
+          </div>
+          <p class="work-save-status" aria-live="polite"></p>
+        </div>
+        <a class="work-instagram-link" href="#" target="_blank" rel="noopener" hidden>Instagramでこの事例を見る →</a>
+      </article>
+
+      <article class="work-item" data-work-id="living">
+        <button class="work-preview demo-trigger" type="button">
+          <img src="assets/work-living.webp" alt="リビングコーディネートの事例">
+          <strong class="work-title">リビングコーディネート</strong>
+          <span class="work-description">ナチュラルで心地よい、家族のくつろぎ空間。</span>
+        </button>
+        <button class="work-edit-toggle" type="button" aria-expanded="false">✎ この事例を編集</button>
+        <div class="work-editor" hidden>
+          <label>タイトル<input class="work-input-title" type="text" value="リビングコーディネート"></label>
+          <label>説明文<textarea class="work-input-description" rows="3">ナチュラルで心地よい、家族のくつろぎ空間。</textarea></label>
+          <label>Instagram投稿URL<input class="work-input-instagram" type="url" placeholder="https://www.instagram.com/p/..." inputmode="url"></label>
+          <div class="work-editor-actions">
+            <button class="work-save" type="button">保存</button>
+            <button class="work-cancel" type="button">キャンセル</button>
+          </div>
+          <p class="work-save-status" aria-live="polite"></p>
+        </div>
+        <a class="work-instagram-link" href="#" target="_blank" rel="noopener" hidden>Instagramでこの事例を見る →</a>
+      </article>
+
+      <article class="work-item" data-work-id="bedroom">
+        <button class="work-preview demo-trigger" type="button">
+          <img src="assets/work-bedroom.webp" alt="寝室コーディネートの事例">
+          <strong class="work-title">寝室コーディネート</strong>
+          <span class="work-description">やすらぎを感じる、ホテルライクな空間に。</span>
+        </button>
+        <button class="work-edit-toggle" type="button" aria-expanded="false">✎ この事例を編集</button>
+        <div class="work-editor" hidden>
+          <label>タイトル<input class="work-input-title" type="text" value="寝室コーディネート"></label>
+          <label>説明文<textarea class="work-input-description" rows="3">やすらぎを感じる、ホテルライクな空間に。</textarea></label>
+          <label>Instagram投稿URL<input class="work-input-instagram" type="url" placeholder="https://www.instagram.com/p/..." inputmode="url"></label>
+          <div class="work-editor-actions">
+            <button class="work-save" type="button">保存</button>
+            <button class="work-cancel" type="button">キャンセル</button>
+          </div>
+          <p class="work-save-status" aria-live="polite"></p>
+        </div>
+        <a class="work-instagram-link" href="#" target="_blank" rel="noopener" hidden>Instagramでこの事例を見る →</a>
+      </article>
     </div></div></section>
 
     <section class="plans section-pad" aria-labelledby="plans-title"><div class="wrap"><span class="eyebrow">PLAN</span><h2 id="plans-title">料金プラン</h2><p class="section-lead">ご予算やご要望に合わせて、最適なプランをご提案します。</p><div class="plans-grid">
