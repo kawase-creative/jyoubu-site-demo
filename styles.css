@@ -86,3 +86,27 @@
 .work-instagram-link{display:inline-block;margin-top:7px;color:var(--gold-dark);font-size:.72rem;font-weight:700;text-decoration:none;border-bottom:1px solid #d9bd8b}
 .work-instagram-link[hidden]{display:none}
 @media(max-width:600px){.works-edit-note{font-size:.69rem;margin-bottom:16px}.work-preview strong{font-size:.89rem;line-height:1.45}.work-preview span{font-size:.7rem}.work-edit-toggle,.work-instagram-link{font-size:.67rem}.work-editor{padding:11px}}
+
+
+/* Admin edit mode */
+.works-edit-note,.work-edit-toggle{display:none}
+body.admin-mode .works-edit-note{display:block}
+body.admin-mode .work-edit-toggle{display:inline-block}
+.admin-dialog{width:min(430px,calc(100% - 28px));border:0;border-radius:16px;padding:30px 34px 26px;background:#fff;color:var(--navy);box-shadow:0 24px 80px rgba(20,41,75,.22)}
+.admin-dialog::backdrop{background:rgba(13,25,45,.42);backdrop-filter:blur(2px)}
+.admin-dialog h2{margin:0 0 8px;font-size:1.7rem}
+.admin-dialog p{margin:0 0 18px;font-size:.88rem;line-height:1.7}
+.admin-dialog label{display:block;font-size:.82rem;font-weight:700;margin-bottom:6px}
+.admin-dialog input{width:100%;border:1px solid #d8d0c4;border-radius:7px;padding:11px 12px;color:var(--navy);font:inherit;background:#fff}
+.admin-dialog input:focus{outline:2px solid #d8ad63;outline-offset:1px;border-color:#c69543}
+.admin-login-submit{width:100%;margin-top:14px}
+.admin-login-status{min-height:1.5em;margin:10px 0 0!important;color:#b04b3c;font-size:.78rem!important}
+.admin-close{position:absolute;top:12px;right:14px;width:36px;height:36px;border:0;background:none;font-size:1.6rem;line-height:1}
+.admin-mode-bar{position:fixed;z-index:80;left:50%;bottom:18px;transform:translateX(-50%);display:flex;align-items:center;gap:12px;padding:10px 12px 10px 17px;border-radius:999px;background:#14294b;color:#fff;box-shadow:0 12px 36px rgba(20,41,75,.28);font-family:'Noto Serif JP',serif}
+.admin-mode-bar[hidden]{display:none}
+.admin-mode-bar strong{font-size:.78rem}
+.admin-mode-bar span{font-size:.68rem;opacity:.78}
+.admin-mode-bar button{border:1px solid rgba(255,255,255,.38);border-radius:999px;background:#fff;color:#14294b;padding:6px 12px;font-size:.68rem;font-weight:700}
+.footer-nav .admin-trigger{color:inherit}
+body.admin-mode .footer-nav .admin-trigger{color:var(--gold);font-weight:700}
+@media(max-width:600px){.admin-dialog{padding:26px 22px 22px}.admin-mode-bar{width:calc(100% - 24px);bottom:12px;justify-content:space-between}.admin-mode-bar span{display:none}}
