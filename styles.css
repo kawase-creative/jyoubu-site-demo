@@ -139,3 +139,6 @@ body.admin-mode .instagram-edit-toggle{display:inline-block}
 /* External social links */
 a.social,a.social-link{color:inherit;text-decoration:none}
 a.social:hover,a.social-link:hover{filter:brightness(.94);transform:translateY(-1px)}
+
+a.social,a.social-link{cursor:pointer}
+a.social:focus-visible,a.social-link:focus-visible{outline:3px solid #dcaf61;outline-offset:4px}
