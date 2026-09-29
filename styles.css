@@ -136,3 +136,6 @@ body.admin-mode .instagram-edit-toggle{display:inline-block}
 .instagram-save-status{min-height:1.4em;margin:7px 0 0;font-size:.67rem;color:var(--green)}
 @media(max-width:900px){.instagram-grid{grid-template-columns:1fr 1fr}.instagram-feed-heading{flex-wrap:wrap}.instagram-feed-heading .pill{margin-left:0}}
 @media(max-width:600px){.instagram-grid{grid-template-columns:1fr}.instagram-feed-heading{display:block}.instagram-feed-heading .pill{width:100%;margin-top:14px}.instagram-embed-host,.instagram-placeholder{min-height:360px}}
+/* External social links */
+a.social,a.social-link{color:inherit;text-decoration:none}
+a.social:hover,a.social-link:hover{filter:brightness(.94);transform:translateY(-1px)}
