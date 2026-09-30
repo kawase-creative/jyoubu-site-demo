@@ -234,6 +234,18 @@ function renderInstagramSlot(slot, url) {
     return;
   }
 
+  if (/^https:\/\/(www\.)?instagram\.com\/stories\//i.test(url)) {
+    host.innerHTML = `
+      <a class="instagram-story-link" href="${url}" target="_blank" rel="noopener">
+        <div class="instagram-placeholder">
+          <img src="assets/instagram-icon.png" alt="">
+          <strong>Instagram STORY</strong>
+          <span>タップしてストーリーズを見る</span>
+        </div>
+      </a>`;
+    return;
+  }
+
   host.innerHTML = `
     <blockquote class="instagram-media" data-instgrm-permalink="${url}" data-instgrm-version="14">
       <a href="${url}" target="_blank" rel="noopener">Instagramで投稿を見る</a>
@@ -275,7 +287,7 @@ async function initInstagramSlots() {
 
     save.addEventListener('click', () => {
       const url = input.value.trim();
-      if (url && !/^https:\/\/(www\.)?instagram\.com\/(p|reel|tv)\//i.test(url)) {
+      if (url && !/^https:\/\/(www\.)?instagram\.com\/(p|reel|tv|stories)\//i.test(url)) {
         status.textContent = 'Instagramの投稿URLを入力してください。';
         return;
       }
