@@ -15,7 +15,7 @@
 - 公開サイト: `https://kawase-creative.github.io/jyoubu-site-demo/`
 - 投稿 API: `https://jyoubu-site-api.1641494papa.workers.dev`
 - 管理画面: `https://jyoubu-site-admin.1641494papa.workers.dev`
-- 管理画面の認証: Cloudflare Access で保護し、現在は Cloudflare アカウントメンバーだけを許可しています。別の担当者を追加する場合は Cloudflare Zero Trust の Access ポリシーで許可対象を設定します。
+- 管理画面の認証: Cloudflare Access で保護しています。Cloudflare アカウントメンバーに加えて、許可リストに登録したメールアドレスへ One-time PIN を送るログインを有効にしています。担当者を追加する場合は、個別のメールアドレスを Access ポリシーに追加します。
 
 ## 再デプロイ
 
