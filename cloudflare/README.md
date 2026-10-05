@@ -8,41 +8,32 @@
 - D1: 投稿情報
 - R2: 管理画面からアップロードする写真
 
-Cloudflare のアカウント接続が必要なため、ここにあるコードだけではまだ公開されていません。初回接続時に次の設定を行います。
+現在、API Worker と管理画面 Worker は Cloudflare に公開済みで、D1 と R2 に接続しています。公開サイトは GitHub Pages から配信しています。
 
-## Cloudflare に接続して初回公開
+## 公開中の構成
 
-1. Cloudflare アカウントで開発者向け CLI にログインします。
+- 公開サイト: `https://kawase-creative.github.io/jyoubu-site-demo/`
+- 投稿 API: `https://jyoubu-site-api.1641494papa.workers.dev`
+- 管理画面: `https://jyoubu-site-admin.1641494papa.workers.dev`
+- 管理画面の認証: Cloudflare Access で保護し、現在は Cloudflare アカウントメンバーだけを許可しています。別の担当者を追加する場合は Cloudflare Zero Trust の Access ポリシーで許可対象を設定します。
 
-   ```sh
-   npx wrangler login
-   ```
+## 再デプロイ
 
-2. D1 データベースと R2 バケットを作ります。
-
-   ```sh
-   npx wrangler d1 create jyoubu-site-content
-   npx wrangler r2 bucket create jyoubu-site-media
-   ```
-
-3. D1 作成時に表示された ID を、`api/wrangler.jsonc` と `admin/wrangler.jsonc` の `database_id` に同じ値で設定します。D1 の名前と R2 バケット名を変えた場合は、それぞれの設定もそろえます。
-
-4. テーブルと初期の施工事例・Instagram投稿を登録します。
+1. `npx wrangler login` で Cloudflare に接続します。
+2. 必要に応じて D1 のマイグレーションを適用します。
 
    ```sh
    npx wrangler d1 migrations apply jyoubu-site-content --remote --config cloudflare/api/wrangler.jsonc
    ```
 
-5. API Worker と管理画面 Worker を公開します。
+3. Worker をそれぞれデプロイします。
 
    ```sh
    npx wrangler deploy --config cloudflare/api/wrangler.jsonc
    npx wrangler deploy --config cloudflare/admin/wrangler.jsonc
    ```
 
-6. Cloudflare ダッシュボードで `jyoubu-site-admin` Worker の **Access** を有効にします。許可するメールアドレスを登録し、ログイン方法にメールのワンタイム PIN を選べば、クライアントに Cloudflare や GitHub のアカウントを作ってもらわずにログインできます。許可リストには担当者のアドレスだけを入れてください。
-
-7. `site-config.js` の `contentApi` と `adminUrl` に、デプロイ後に表示されるそれぞれの `workers.dev` URL を設定します。GitHub Pages に反映すると、管理画面リンクが表示され、保存した内容がサイトに出ます。
+4. API URL や管理画面 URL を変更した場合は `site-config.js` も更新して、GitHub Pages に反映します。
 
 ## 画面・データの仕様
 
