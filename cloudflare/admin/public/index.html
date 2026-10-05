@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>上武サイト 管理画面</title>
+  <link rel="stylesheet" href="/admin.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="https://kawase-creative.github.io/jyoubu-site-demo/" target="_blank" rel="noopener">JYOUBU <span>サイト管理</span></a>
+  </header>
+  <main class="layout">
+    <section class="intro">
+      <p class="eyebrow">CONTENT MANAGEMENT</p>
+      <h1>施工事例とInstagramを更新</h1>
+      <p>写真を選び、内容を入力して保存するとサイトに反映されます。</p>
+    </section>
+    <nav class="tabs" aria-label="管理メニュー">
+      <button class="tab active" type="button" data-tab="works">施工事例</button>
+      <button class="tab" type="button" data-tab="instagram">Instagram</button>
+    </nav>
+    <section class="panel" id="works-panel">
+      <div class="panel-heading"><div><h2>施工事例</h2><p>新しい写真を追加したり、登録済みの事例を編集できます。</p></div><button class="primary" id="new-work" type="button">＋ 事例を追加</button></div>
+      <div class="editor" id="work-editor" hidden>
+        <h3 id="work-editor-title">新しい施工事例</h3>
+        <form id="work-form">
+          <input type="hidden" name="id">
+          <label>写真 <input name="image" type="file" accept="image/jpeg,image/png,image/webp"><small>JPEG・PNG・WebP、10MBまで</small></label>
+          <img class="image-preview" id="image-preview" alt="写真プレビュー" hidden>
+          <label>タイトル <input name="title" required maxlength="100" placeholder="例：キッチンリフォーム"></label>
+          <label>説明 <textarea name="description" rows="3" maxlength="500" placeholder="工事内容やこだわりをご紹介"></textarea></label>
+          <label>写真の説明（アクセシビリティ用） <input name="imageAlt" maxlength="160" placeholder="写真に写っている内容"></label>
+          <label>関連するInstagram投稿（任意） <input name="instagramUrl" type="url" placeholder="https://www.instagram.com/p/..."></label>
+          <div class="form-actions"><button class="primary" type="submit">保存して公開</button><button class="secondary" type="button" data-cancel="work">キャンセル</button><p class="form-status" id="work-status" aria-live="polite"></p></div>
+        </form>
+      </div>
+      <div class="entries" id="works-list" aria-live="polite"></div>
+    </section>
+    <section class="panel" id="instagram-panel" hidden>
+      <div class="panel-heading"><div><h2>Instagram投稿</h2><p>公開中の投稿・リールのURLを登録します。Instagram側の投稿を埋め込んで表示します。</p></div></div>
+      <form id="instagram-form" class="inline-form">
+        <label>Instagram投稿URL <input name="url" type="url" required placeholder="https://www.instagram.com/p/... または /reel/..."></label>
+        <label>ひとこと（任意） <input name="caption" maxlength="180" placeholder="投稿の説明"></label>
+        <button class="primary" type="submit">投稿を追加</button>
+        <p class="form-status" id="instagram-status" aria-live="polite"></p>
+      </form>
+      <div class="entries" id="instagram-list" aria-live="polite"></div>
+    </section>
+    <p class="notice" id="global-status" aria-live="polite"></p>
+  </main>
+  <script src="/admin.js" defer></script>
+</body>
+</html>

@@ -9,11 +9,11 @@ function closeMobileNav() {
   menuToggle.setAttribute('aria-label', 'メニューを開く');
 }
 
-document.querySelectorAll('.demo-trigger').forEach((button) => {
-  button.addEventListener('click', () => {
+document.addEventListener('click', (event) => {
+  if (event.target.closest('.demo-trigger')) {
     closeMobileNav();
     demoDialog.showModal();
-  });
+  }
 });
 
 document.querySelectorAll('.contact-trigger').forEach((button) => {
@@ -45,257 +45,128 @@ menuToggle.addEventListener('click', () => {
 });
 
 
-// WORKS mini editor prototype (browser-local demo)
+// Cloudflare-backed content for client-managed work and Instagram publishing.
+const SITE_CONFIG = window.JYOUBU_SITE_CONFIG || {};
+const CONTENT_API = String(SITE_CONFIG.contentApi || '').replace(/\/$/, '');
+const adminLink = document.getElementById('admin-link');
+if (adminLink && SITE_CONFIG.adminUrl) {
+  adminLink.href = SITE_CONFIG.adminUrl;
+  adminLink.target = '_blank';
+  adminLink.rel = 'noopener noreferrer';
+  adminLink.hidden = false;
+}
 
-const WORKS_STORAGE_KEY = 'jyoubu-works-demo-v1';
-
-function loadWorksData() {
+function validInstagramLink(value) {
   try {
-    return JSON.parse(localStorage.getItem(WORKS_STORAGE_KEY) || '{}');
+    const url = new URL(value);
+    return url.protocol === 'https:' && ['www.instagram.com', 'instagram.com'].includes(url.hostname)
+      && /^\/(p|reel|tv|stories)\//.test(url.pathname);
   } catch {
-    return {};
+    return false;
   }
 }
 
-function saveWorksData(data) {
-  localStorage.setItem(WORKS_STORAGE_KEY, JSON.stringify(data));
+function createWorkCard(work) {
+  const article = document.createElement('article');
+  article.className = 'work-item';
+  article.dataset.workId = work.id || '';
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'work-preview demo-trigger';
+  const image = document.createElement('img');
+  image.src = work.imageKey ? `${CONTENT_API}/media/${encodeURIComponent(work.imageKey)}` : work.imageUrl || '';
+  image.alt = work.imageAlt || work.title || '施工事例';
+  const title = document.createElement('strong');
+  title.className = 'work-title';
+  title.textContent = work.title || '';
+  const description = document.createElement('span');
+  description.className = 'work-description';
+  description.textContent = work.description || '';
+  button.append(image, title, description);
+  article.append(button);
+  if (validInstagramLink(work.instagramUrl || '')) {
+    const link = document.createElement('a');
+    link.className = 'work-instagram-link';
+    link.href = work.instagramUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = 'Instagramでこの事例を見る →';
+    article.append(link);
+  }
+  return article;
 }
 
-function applyWorkData(card, data) {
-  if (!data) return;
-  const title = card.querySelector('.work-title');
-  const description = card.querySelector('.work-description');
-  const instagramLink = card.querySelector('.work-instagram-link');
-  const titleInput = card.querySelector('.work-input-title');
-  const descriptionInput = card.querySelector('.work-input-description');
-  const instagramInput = card.querySelector('.work-input-instagram');
+function renderDynamicWorks(works) {
+  const grid = document.querySelector('.works-grid');
+  if (!grid || !Array.isArray(works)) return;
+  grid.replaceChildren(...works.map(createWorkCard));
+}
 
-  if (typeof data.title === 'string') {
-    title.textContent = data.title;
-    titleInput.value = data.title;
-  }
-  if (typeof data.description === 'string') {
-    description.textContent = data.description;
-    descriptionInput.value = data.description;
-  }
-  if (typeof data.instagram === 'string') {
-    instagramInput.value = data.instagram;
-    if (/^https:\/\/(www\.)?instagram\.com\//i.test(data.instagram)) {
-      instagramLink.href = data.instagram;
-      instagramLink.hidden = false;
+function renderDynamicInstagram(posts) {
+  const grid = document.querySelector('.instagram-grid');
+  if (!grid || !Array.isArray(posts)) return;
+  grid.replaceChildren();
+  for (const post of posts) {
+    if (!validInstagramLink(post.url || '')) continue;
+    const article = document.createElement('article');
+    article.className = 'instagram-slot';
+    const host = document.createElement('div');
+    host.className = 'instagram-embed-host';
+    if (/^https:\/\/(www\.)?instagram\.com\/stories\//i.test(post.url)) {
+      const link = document.createElement('a');
+      link.className = 'instagram-story-link';
+      link.href = post.url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      const placeholder = document.createElement('div');
+      placeholder.className = 'instagram-placeholder';
+      const icon = document.createElement('img'); icon.src = 'assets/instagram-icon.png'; icon.alt = '';
+      const label = document.createElement('strong'); label.textContent = 'Instagram STORY';
+      const caption = document.createElement('span'); caption.textContent = post.caption || 'タップしてストーリーズを見る';
+      placeholder.append(icon, label, caption); link.append(placeholder); host.append(link);
     } else {
-      instagramLink.hidden = true;
-      instagramLink.removeAttribute('href');
+      const quote = document.createElement('blockquote');
+      quote.className = 'instagram-media';
+      quote.dataset.instgrmPermalink = post.url;
+      quote.dataset.instgrmVersion = '14';
+      const link = document.createElement('a');
+      link.href = post.url; link.target = '_blank'; link.rel = 'noopener noreferrer';
+      link.textContent = post.caption || 'Instagramで投稿を見る';
+      quote.append(link); host.append(quote);
     }
+    article.append(host); grid.append(article);
   }
+  if (window.instgrm?.Embeds?.process) window.instgrm.Embeds.process();
+  else setTimeout(() => window.instgrm?.Embeds?.process?.(), 1200);
 }
 
-const worksData = loadWorksData();
-
-document.querySelectorAll('.work-item[data-work-id]').forEach((card) => {
-  const id = card.dataset.workId;
-  const editor = card.querySelector('.work-editor');
-  const toggle = card.querySelector('.work-edit-toggle');
-  const cancel = card.querySelector('.work-cancel');
-  const save = card.querySelector('.work-save');
-  const status = card.querySelector('.work-save-status');
-
-  applyWorkData(card, worksData[id]);
-
-  function setEditor(open) {
-    editor.hidden = !open;
-    toggle.setAttribute('aria-expanded', String(open));
-    toggle.textContent = open ? '× 編集を閉じる' : '✎ この事例を編集';
-    status.textContent = '';
-  }
-
-  toggle.addEventListener('click', () => setEditor(editor.hidden));
-  cancel.addEventListener('click', () => {
-    applyWorkData(card, worksData[id] || {
-      title: card.querySelector('.work-title').textContent,
-      description: card.querySelector('.work-description').textContent,
-      instagram: card.querySelector('.work-instagram-link').hidden ? '' : card.querySelector('.work-instagram-link').href
-    });
-    setEditor(false);
-  });
-
-  save.addEventListener('click', () => {
-    const instagram = card.querySelector('.work-input-instagram').value.trim();
-    if (instagram && !/^https:\/\/(www\.)?instagram\.com\//i.test(instagram)) {
-      status.textContent = 'InstagramのURL（https://www.instagram.com/...）を入力してください。';
-      return;
-    }
-    worksData[id] = {
-      title: card.querySelector('.work-input-title').value.trim(),
-      description: card.querySelector('.work-input-description').value.trim(),
-      instagram
-    };
-    saveWorksData(worksData);
-    applyWorkData(card, worksData[id]);
-    status.textContent = 'この端末に保存しました。';
-    setTimeout(() => setEditor(false), 650);
-  });
-});
-
-
-// Admin edit mode prototype
-const adminDialog = document.getElementById('admin-dialog');
-const adminTrigger = document.querySelector('.admin-trigger');
-const adminClose = document.querySelector('.admin-close');
-const adminLoginForm = document.getElementById('admin-login-form');
-const adminPassword = document.getElementById('admin-password');
-const adminLoginStatus = document.getElementById('admin-login-status');
-const adminModeBar = document.getElementById('admin-mode-bar');
-const adminLogout = document.getElementById('admin-logout');
-
-function setAdminMode(enabled) {
-  document.body.classList.toggle('admin-mode', enabled);
-  adminModeBar.hidden = !enabled;
-  document.querySelectorAll('.work-editor').forEach((editor) => {
-    if (!enabled) editor.hidden = true;
-  });
-  document.querySelectorAll('.work-edit-toggle').forEach((toggle) => {
-    if (!enabled) {
-      toggle.setAttribute('aria-expanded', 'false');
-      toggle.textContent = '✎ この事例を編集';
-    }
-  });
-  document.querySelectorAll('.instagram-editor').forEach((editor) => {
-    if (!enabled) editor.hidden = true;
-  });
-  document.querySelectorAll('.instagram-edit-toggle').forEach((toggle) => {
-    if (!enabled) toggle.textContent = '✎ 投稿URLを編集';
-  });
-}
-
-adminTrigger?.addEventListener('click', () => {
-  if (document.body.classList.contains('admin-mode')) {
-    document.querySelector('.works')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+async function loadManagedContent() {
+  if (!CONTENT_API) {
+    await loadBundledInstagram();
     return;
   }
-  adminLoginStatus.textContent = '';
-  adminPassword.value = '';
-  adminDialog.showModal();
-  setTimeout(() => adminPassword.focus(), 50);
-});
-
-adminClose?.addEventListener('click', () => adminDialog.close());
-
-adminDialog?.addEventListener('click', (event) => {
-  if (event.target === adminDialog) adminDialog.close();
-});
-
-adminLoginForm?.addEventListener('submit', (event) => {
-  event.preventDefault();
-  if (adminPassword.value === '0000') {
-    setAdminMode(true);
-    adminDialog.close();
-    document.querySelector('.works')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  } else {
-    adminLoginStatus.textContent = 'パスワードが違います。';
-    adminPassword.select();
-  }
-});
-
-adminLogout?.addEventListener('click', () => {
-  setAdminMode(false);
-  document.querySelector('.footer')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-});
-
-
-// Instagram embed section (shared JSON on GitHub Pages)
-const INSTAGRAM_JSON_PATH = 'data/instagram.json';
-
-async function loadInstagramData() {
   try {
-    const response = await fetch(`${INSTAGRAM_JSON_PATH}?v=${Date.now()}`, { cache: 'no-store' });
-    if (!response.ok) throw new Error('Failed to load Instagram JSON');
-    const json = await response.json();
-    const data = {};
-    for (const post of json.posts || []) {
-      data[String(post.id)] = post.url || '';
-    }
-    return data;
+    const response = await fetch(`${CONTENT_API}/api/content`, { cache: 'no-store' });
+    if (!response.ok) throw new Error('Content API unavailable');
+    const content = await response.json();
+    renderDynamicWorks(content.works || []);
+    renderDynamicInstagram(content.instagram || []);
+  } catch (error) {
+    // Retain the static sample content until the Cloudflare API is connected.
+    console.info('Using the bundled sample content until the managed site is connected.', error);
+    await loadBundledInstagram();
+  }
+}
+
+async function loadBundledInstagram() {
+  try {
+    const response = await fetch(`data/instagram.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (!response.ok) return;
+    const data = await response.json();
+    renderDynamicInstagram(data.posts || []);
   } catch {
-    return {};
+    // Keep the visible placeholders if the bundled sample data cannot be read.
   }
 }
 
-function renderInstagramSlot(slot, url) {
-  const host = slot.querySelector('.instagram-embed-host');
-  const slotNo = slot.dataset.instagramSlot;
-  if (!url) {
-    host.innerHTML = `
-      <div class="instagram-placeholder">
-        <img src="assets/instagram-icon.png" alt="">
-        <strong>Instagram POST 0${slotNo}</strong>
-        <span>管理者モードから投稿URLを設定できます。</span>
-      </div>`;
-    return;
-  }
-
-  if (/^https:\/\/(www\.)?instagram\.com\/stories\//i.test(url)) {
-    host.innerHTML = `
-      <a class="instagram-story-link" href="${url}" target="_blank" rel="noopener">
-        <div class="instagram-placeholder">
-          <img src="assets/instagram-icon.png" alt="">
-          <strong>Instagram STORY</strong>
-          <span>タップしてストーリーズを見る</span>
-        </div>
-      </a>`;
-    return;
-  }
-
-  host.innerHTML = `
-    <blockquote class="instagram-media" data-instgrm-permalink="${url}" data-instgrm-version="14">
-      <a href="${url}" target="_blank" rel="noopener">Instagramで投稿を見る</a>
-    </blockquote>`;
-
-  if (window.instgrm?.Embeds?.process) {
-    window.instgrm.Embeds.process();
-  } else {
-    setTimeout(() => window.instgrm?.Embeds?.process?.(), 1200);
-  }
-}
-
-async function initInstagramSlots() {
-  const instagramData = await loadInstagramData();
-
-  document.querySelectorAll('.instagram-slot[data-instagram-slot]').forEach((slot) => {
-    const id = slot.dataset.instagramSlot;
-    const toggle = slot.querySelector('.instagram-edit-toggle');
-    const editor = slot.querySelector('.instagram-editor');
-    const input = slot.querySelector('.instagram-url-input');
-    const save = slot.querySelector('.instagram-save');
-    const cancel = slot.querySelector('.instagram-cancel');
-    const status = slot.querySelector('.instagram-save-status');
-
-    input.value = instagramData[id] || '';
-    renderInstagramSlot(slot, instagramData[id] || '');
-
-    function setInstagramEditor(open) {
-      editor.hidden = !open;
-      toggle.textContent = open ? '× 編集を閉じる' : '✎ 投稿URLを編集';
-      status.textContent = '';
-    }
-
-    toggle.addEventListener('click', () => setInstagramEditor(editor.hidden));
-    cancel.addEventListener('click', () => {
-      input.value = instagramData[id] || '';
-      setInstagramEditor(false);
-    });
-
-    save.addEventListener('click', () => {
-      const url = input.value.trim();
-      if (url && !/^https:\/\/(www\.)?instagram\.com\/(p|reel|tv|stories)\//i.test(url)) {
-        status.textContent = 'Instagramの投稿URLを入力してください。';
-        return;
-      }
-      instagramData[id] = url;
-      renderInstagramSlot(slot, url);
-      status.textContent = 'プレビューしました。公開反映にはGitHub JSONの更新が必要です。';
-    });
-  });
-}
-
-initInstagramSlots();
+loadManagedContent();
