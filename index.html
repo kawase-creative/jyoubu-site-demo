@@ -8,7 +8,7 @@
   <title>株式会社 上武 | リフォームとインテリアで、暮らしをもっと好きになる。</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css?v=20260929-social">
-  <script defer src="script.js?v=20260926-2"></script>
+  <script defer src="script.js?v=20261010-work-lightbox"></script>
 </head>
 <body>
   <svg class="sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -109,7 +109,7 @@
     <div class="works-grid">
 
       <article class="work-item" data-work-id="kitchen">
-        <button class="work-preview demo-trigger" type="button">
+        <button class="work-preview" type="button">
           <img src="assets/work-kitchen.webp" alt="キッチンリフォームの事例">
           <strong class="work-title">キッチンリフォーム</strong>
           <span class="work-description">明るく使いやすい、家族が集まるキッチンに。</span>
@@ -117,7 +117,7 @@
       </article>
 
       <article class="work-item" data-work-id="bath">
-        <button class="work-preview demo-trigger" type="button">
+        <button class="work-preview" type="button">
           <img src="assets/work-bath.webp" alt="洗面所リフォームの施工前と施工後">
           <strong class="work-title">洗面所リフォーム</strong>
           <span class="work-description">清潔感のある、快適な洗面空間に。</span>
@@ -125,7 +125,7 @@
       </article>
 
       <article class="work-item" data-work-id="living">
-        <button class="work-preview demo-trigger" type="button">
+        <button class="work-preview" type="button">
           <img src="assets/work-living.webp" alt="リビングコーディネートの事例">
           <strong class="work-title">リビングコーディネート</strong>
           <span class="work-description">ナチュラルで心地よい、家族のくつろぎ空間。</span>
@@ -133,7 +133,7 @@
       </article>
 
       <article class="work-item" data-work-id="bedroom">
-        <button class="work-preview demo-trigger" type="button">
+        <button class="work-preview" type="button">
           <img src="assets/work-bedroom.webp" alt="寝室コーディネートの事例">
           <strong class="work-title">寝室コーディネート</strong>
           <span class="work-description">やすらぎを感じる、ホテルライクな空間に。</span>
@@ -216,6 +216,13 @@
       <button class="pill pill-gold contact-submit" type="submit">送信する <svg><use href="#i-arrow"/></svg></button>
       <p id="contact-status" class="contact-status" role="status" aria-live="polite"></p>
     </form>
+  </dialog>
+  <dialog id="work-lightbox" class="work-lightbox" aria-label="施工事例の拡大写真">
+    <button class="work-lightbox-close" type="button" aria-label="拡大写真を閉じる">×</button>
+    <figure class="work-lightbox-figure">
+      <img id="work-lightbox-image" alt="">
+      <figcaption id="work-lightbox-caption"></figcaption>
+    </figure>
   </dialog>
   <dialog id="demo-dialog" class="demo-dialog" aria-labelledby="demo-message"><p id="demo-message">デモ画面です。</p><button class="pill pill-gold dialog-close" type="button">閉じる</button></dialog>
 </body>
