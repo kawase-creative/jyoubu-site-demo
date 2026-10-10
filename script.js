@@ -16,6 +16,33 @@ document.addEventListener('click', (event) => {
   }
 });
 
+// All case cards (including cards fetched from the content API) share one viewer.
+const worksGrid = document.querySelector('.works-grid');
+const workLightbox = document.getElementById('work-lightbox');
+const lightboxImage = document.getElementById('work-lightbox-image');
+const lightboxCaption = document.getElementById('work-lightbox-caption');
+
+worksGrid.addEventListener('click', (event) => {
+  const preview = event.target.closest('.work-preview');
+  if (!preview || !worksGrid.contains(preview)) return;
+  const image = preview.querySelector('img');
+  if (!image || !image.getAttribute('src')) return;
+
+  lightboxImage.src = image.currentSrc || image.src;
+  lightboxImage.alt = image.alt;
+  lightboxCaption.textContent = preview.querySelector('.work-title')?.textContent?.trim()
+    || image.alt || '施工事例';
+  workLightbox.showModal();
+});
+
+workLightbox.querySelector('.work-lightbox-close').addEventListener('click', () => workLightbox.close());
+workLightbox.addEventListener('click', (event) => {
+  if (event.target === workLightbox) workLightbox.close();
+});
+workLightbox.addEventListener('close', () => {
+  lightboxImage.removeAttribute('src');
+});
+
 document.querySelectorAll('.contact-trigger').forEach((button) => {
   button.addEventListener('click', () => {
     closeMobileNav();
@@ -72,7 +99,8 @@ function createWorkCard(work) {
   article.dataset.workId = work.id || '';
   const button = document.createElement('button');
   button.type = 'button';
-  button.className = 'work-preview demo-trigger';
+  button.className = 'work-preview';
+  button.setAttribute('aria-label', `${work.title || '施工事例'}の写真を拡大表示`);
   const image = document.createElement('img');
   image.src = work.imageKey ? `${CONTENT_API}/media/${encodeURIComponent(work.imageKey)}` : work.imageUrl || '';
   image.alt = work.imageAlt || work.title || '施工事例';
